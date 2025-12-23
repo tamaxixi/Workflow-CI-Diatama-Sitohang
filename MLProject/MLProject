@@ -1,6 +1,4 @@
-name: workflow-ci-mlflow
-
-conda_env: conda.yaml
+name: credit-risk-ci
 
 entry_points:
   main:
