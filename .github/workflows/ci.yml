@@ -6,36 +6,59 @@ on:
   workflow_dispatch:
 
 jobs:
-  train-model:
+  train-mlflow-project:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    # 1. Set up job
+    - name: Set up job
+      run: echo "Start CI pipeline"
 
-      - name: Set up Miniconda
-        uses: conda-incubator/setup-miniconda@v3
-        with:
-          auto-update-conda: true
-          python-version: 3.12
-          activate-environment: mlflow-env
+    # 2. Checkout repository
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Install MLflow
-        run: pip install mlflow
-        
-      - name: Clean MLflow tracking directory
-        run: |
-          rm -rf MLProject/mlruns
+    # 3. Set up Python
+    - name: Set up Python 3.12.7
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.12.7"
 
-      - name: Run MLflow Project with Conda
-        shell: bash -l {0}
-        run: |
-          cd MLProject
-          mlflow run . --env-manager=conda
+    # 4. Check environment
+    - name: Check environment
+      run: |
+        python --version
+        pip --version
 
+    # 5. Set up Miniconda
+    - name: Set up Miniconda
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        auto-update-conda: true
+        python-version: 3.12
+        activate-environment: mlflow-env
+        environment-file: MLProject/conda.yaml
 
-      - name: Upload MLflow artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: mlflow-artifacts
-          path: MLProject/mlruns
+    # 7. Set MLflow Tracking URI
+    - name: Set MLflow Tracking URI
+      shell: bash -l {0}
+      run: |
+        echo "MLFLOW_TRACKING_URI=file:./mlruns" >> $GITHUB_ENV
+
+    # 8. Run MLflow Project
+    - name: Run MLflow Project
+      shell: bash -l {0}
+      run: |
+        cd MLProject
+        mlflow run . --env-manager=conda
+
+    # 9. Upload MLflow artifacts (pengganti Google Drive)
+    - name: Upload MLflow artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: mlflow-artifacts
+        path: MLProject/mlruns
+
+    # 10. Complete job
+    - name: Complete job
+      run: echo "CI pipeline completed successfully"

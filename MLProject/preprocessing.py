@@ -7,7 +7,7 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 
-RAW_PATH = "data/credit_risk_dataset.csv"
+RAW_PATH = "credit_risk_raw/credit_risk_dataset.csv"
 OUTPUT_DIR = "credit_risk_preprocessing"
 
 def run_preprocessing():
