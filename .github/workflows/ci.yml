@@ -22,6 +22,10 @@ jobs:
 
       - name: Install MLflow
         run: pip install mlflow
+        
+      - name: Clean MLflow tracking directory
+        run: |
+          rm -rf MLProject/mlruns
 
       - name: Run MLflow Project with Conda
         shell: bash -l {0}
